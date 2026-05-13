@@ -5,31 +5,25 @@ const INITIAL_PLAYERS = [
   {
     id: 'neriya',
     name: 'Neriya Zudi',
-    title: 'Harvester of the Golden Fields',
     accent: '#f39c12',
     accentDeep: '#b9750a',
     glow: 'rgba(243, 156, 18, 0.55)',
-    resource: 'Wheat',
     icon: WheatIcon,
   },
   {
     id: 'eliko',
     name: 'Eliko Hubara',
-    title: 'Master of the Largest Army',
     accent: '#2980b9',
     accentDeep: '#1c5980',
     glow: 'rgba(41, 128, 185, 0.55)',
-    resource: 'Ore',
     icon: OreIcon,
   },
   {
     id: 'tal',
     name: 'Tal Halevi',
-    title: 'Forger of Settlements',
     accent: '#e74c3c',
     accentDeep: '#a52a1d',
     glow: 'rgba(231, 76, 60, 0.55)',
-    resource: 'Brick',
     icon: BrickIcon,
   },
 ]
@@ -216,30 +210,26 @@ function PlayerCard({
         )}
       </AnimatePresence>
 
-      <header className="flex items-center gap-4">
+      <header className="flex flex-col items-center gap-4 text-center">
         <div
-          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl"
+          className="flex h-16 w-16 items-center justify-center rounded-2xl"
           style={{
-            background: `linear-gradient(135deg, ${player.accent} 0%, ${player.accentDeep} 100%)`,
-            boxShadow: `inset 0 1px 0 rgba(255,255,255,0.45), 0 10px 28px -8px ${player.glow}`,
+            background: 'linear-gradient(135deg, #f8eccd 0%, #e8c483 100%)',
+            border: `2px solid ${player.accent}`,
+            boxShadow: `inset 0 1px 0 rgba(255,255,255,0.7), 0 12px 30px -10px ${player.glow}`,
           }}
         >
-          <Icon className="h-7 w-7 text-white drop-shadow" />
+          <Icon className="h-10 w-10" />
         </div>
-        <div className="min-w-0">
-          <h2 className="font-display text-xl font-bold leading-tight text-catan-tan">
-            {player.name}
-          </h2>
-          <p
-            className="mt-0.5 text-[11px] font-semibold uppercase tracking-widest"
-            style={{ color: player.accent }}
-          >
-            {player.title}
-          </p>
-        </div>
+        <h2
+          className="w-full truncate font-display text-3xl font-bold leading-tight text-catan-tan sm:text-[34px]"
+          title={player.name}
+        >
+          {player.name}
+        </h2>
       </header>
 
-      <div className="relative my-7 flex items-center justify-center">
+      <div className="relative my-6 flex items-center justify-center">
         <div
           aria-hidden
           className="absolute inset-0 rounded-2xl opacity-25 blur-2xl"
@@ -288,13 +278,11 @@ function PlayerCard({
           label={`Decrement ${player.name}`}
         />
 
-        <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-catan-tan/60">
-          <span
-            className="h-1.5 w-1.5 rounded-full"
-            style={{ background: player.accent, boxShadow: `0 0 8px ${player.accent}` }}
-          />
-          {player.resource}
-        </div>
+        <RobberIcon
+          color={player.accent}
+          className="h-12 w-12"
+          aria-label={`${player.name}'s robber token`}
+        />
 
         <CounterButton
           variant="increment"
@@ -391,13 +379,21 @@ function LeaderboardBar({ players, wins }) {
 
 function Footer() {
   return (
-    <footer className="mt-16 flex flex-col items-center gap-4 text-center">
+    <footer className="mt-16 flex flex-col items-center gap-5 text-center">
       <div className="flex items-center gap-4">
         <span className="h-px w-16 bg-catan-tan/25" />
         <CompassRose className="h-4 w-4 text-catan-tan/50" />
         <span className="h-px w-16 bg-catan-tan/25" />
       </div>
-      <p className="gold-shimmer font-display text-2xl font-extrabold uppercase tracking-[0.32em] sm:text-3xl">
+      <CatanDice className="h-16 w-auto sm:h-20" />
+      <p
+        className="font-display text-2xl font-extrabold uppercase tracking-[0.28em] sm:text-3xl"
+        style={{
+          color: '#f5e6c8',
+          textShadow:
+            '0 1px 0 rgba(0,0,0,0.45), 0 2px 18px rgba(0,0,0,0.55)',
+        }}
+      >
         May the dice favor you.
       </p>
     </footer>
@@ -713,26 +709,252 @@ function ResetIcon({ className }) {
   )
 }
 
+/* Isometric stack of three terracotta bricks, in the spirit of the reference. */
 function BrickIcon({ className }) {
   return (
-    <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-      <path d="M3 6h8v5H3V6zm10 0h8v5h-8V6zM3 13h5v5H3v-5zm7 0h7v5h-7v-5zm9 0h2v5h-2v-5z" />
+    <svg viewBox="0 0 32 32" className={className}>
+      <g stroke="rgba(0,0,0,0.45)" strokeWidth="0.9" strokeLinejoin="round">
+        {/* Bottom brick */}
+        <polygon points="4,20 14,17 26,20 16,23" fill="#e0825a" />
+        <polygon points="4,20 16,23 16,28 4,25" fill="#a85433" />
+        <polygon points="16,23 26,20 26,25 16,28" fill="#c66740" />
+        {/* Middle brick (offset right) */}
+        <polygon points="14,14 22,12 30,14.5 22,16.5" fill="#e8956b" />
+        <polygon points="14,14 22,16.5 22,20.5 14,18" fill="#ad5634" />
+        <polygon points="22,16.5 30,14.5 30,18.5 22,20.5" fill="#c66740" />
+        {/* Top brick (offset left) */}
+        <polygon points="6,8 14,6 22,8 14,10" fill="#e8956b" />
+        <polygon points="6,8 14,10 14,14 6,12" fill="#ad5634" />
+        <polygon points="14,10 22,8 22,12 14,14" fill="#c66740" />
+      </g>
+      {/* Tiny mortar nicks for that illustrated feel */}
+      <g stroke="rgba(0,0,0,0.35)" strokeWidth="0.5" strokeLinecap="round">
+        <line x1="10" y1="9" x2="10" y2="13" />
+        <line x1="18" y1="11" x2="18" y2="14.5" />
+        <line x1="10" y1="21.5" x2="10" y2="26.5" />
+      </g>
     </svg>
   )
 }
 
+/* Cluster of ore rocks with facets and highlights. */
 function OreIcon({ className }) {
   return (
-    <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-      <path d="M12 2l9 7-3.5 11h-11L3 9l9-7zm0 3.2L6 9.5l2.5 8h7L18 9.5 12 5.2z" />
+    <svg viewBox="0 0 32 32" className={className}>
+      <g stroke="rgba(0,0,0,0.4)" strokeWidth="0.9" strokeLinejoin="round">
+        {/* Back rock */}
+        <polygon points="8,15 14,5 22,7 26,14 22,20 12,21" fill="#aab2bd" />
+        {/* Front-left rock */}
+        <polygon points="4,20 10,14 16,18 14,26 6,26" fill="#cdd3da" />
+        {/* Front-right rock */}
+        <polygon points="16,18 22,16 28,22 26,28 16,27" fill="#b9c0c9" />
+        {/* Facet creases for chiseled look */}
+        <polyline points="14,5 16,12 22,7" fill="none" />
+        <polyline points="10,14 12,18 16,18" fill="none" />
+        <polyline points="22,16 24,22 28,22" fill="none" />
+      </g>
+      {/* Highlight specks */}
+      <g fill="white" opacity="0.55">
+        <polygon points="13,8 16,9 14,11" />
+        <polygon points="7,21 9,21.5 8,23" />
+        <polygon points="22,19 24,20 22.5,22" />
+      </g>
     </svg>
   )
 }
 
+/* Sheaf of wheat — three grain heads on a stem with a bound twine. */
 function WheatIcon({ className }) {
   return (
-    <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-      <path d="M12 2c1.5 2 1.5 4 0 6-1.5-2-1.5-4 0-6zm-5 4c2 1 3 2.5 3 4.5-2-1-3-2.5-3-4.5zm10 0c0 2-1 3.5-3 4.5 0-2 1-3.5 3-4.5zM7 11c2 1 3 2.5 3 4.5-2-1-3-2.5-3-4.5zm10 0c0 2-1 3.5-3 4.5 0-2 1-3.5 3-4.5zm-5 2c1.5 2 1.5 4 0 6-1.5-2-1.5-4 0-6zm-1 7h2v2h-2v-2z" />
+    <svg viewBox="0 0 32 32" className={className}>
+      <g
+        stroke="rgba(80,50,10,0.65)"
+        strokeWidth="0.9"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="#f1c40f"
+      >
+        {/* Center stalk */}
+        <path
+          d="M16 30 L 16 14"
+          stroke="rgba(80,50,10,0.85)"
+          strokeWidth="1.4"
+          fill="none"
+        />
+        {/* Center grain head */}
+        <ellipse cx="16" cy="8" rx="2" ry="3.5" />
+        <ellipse cx="16" cy="3.5" rx="1.6" ry="2.6" />
+        <path d="M16 11.5 L 16 14" stroke="rgba(80,50,10,0.85)" />
+        {/* Left grain head */}
+        <path d="M10 22 L 16 16" stroke="rgba(80,50,10,0.85)" strokeWidth="1.2" fill="none" />
+        <ellipse cx="9.5" cy="14" rx="2" ry="3.4" transform="rotate(-30 9.5 14)" />
+        <ellipse cx="7" cy="10" rx="1.6" ry="2.6" transform="rotate(-30 7 10)" />
+        {/* Right grain head */}
+        <path d="M22 22 L 16 16" stroke="rgba(80,50,10,0.85)" strokeWidth="1.2" fill="none" />
+        <ellipse cx="22.5" cy="14" rx="2" ry="3.4" transform="rotate(30 22.5 14)" />
+        <ellipse cx="25" cy="10" rx="1.6" ry="2.6" transform="rotate(30 25 10)" />
+        {/* Twine binding */}
+        <rect x="13" y="22" width="6" height="2.6" rx="1" fill="#a05a16" stroke="rgba(40,20,5,0.7)" />
+      </g>
+      {/* Grain seam highlights */}
+      <g stroke="rgba(255,250,200,0.55)" strokeWidth="0.7" fill="none">
+        <line x1="16" y1="5" x2="16" y2="11" />
+        <line x1="8" y1="11" x2="11" y2="16" />
+        <line x1="24" y1="11" x2="21" y2="16" />
+      </g>
+    </svg>
+  )
+}
+
+/* The Robber — detective-style outline (fedora hat, eye mask, trench coat).
+   Pure line art in the player's accent color. */
+function RobberIcon({ className, color, ...rest }) {
+  return (
+    <svg
+      viewBox="0 0 64 80"
+      className={className}
+      role="img"
+      fill="none"
+      stroke={color}
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...rest}
+    >
+      {/* Hat brim */}
+      <path d="M11 17 Q 32 13 53 17 Q 32 20 11 17 Z" />
+
+      {/* Hat crown */}
+      <path d="M21 17 L 21 9 Q 21 5 26 5 L 38 5 Q 43 5 43 9 L 43 17" />
+
+      {/* Hatband */}
+      <path d="M22 14 L 42 14" strokeWidth="1.6" />
+
+      {/* Face / jaw beneath the hat */}
+      <path d="M24 19 L 24 25 Q 24 29 28 30 L 36 30 Q 40 29 40 25 L 40 19" />
+
+      {/* Eye mask — two lenses connected by a bridge */}
+      <circle cx="28" cy="22.5" r="2.4" fill={color} stroke="none" />
+      <circle cx="36" cy="22.5" r="2.4" fill={color} stroke="none" />
+      <path d="M30.2 22.5 L 33.8 22.5" strokeWidth="1.4" />
+
+      {/* Neck */}
+      <path d="M29.5 30 L 29.5 33" strokeWidth="1.6" />
+      <path d="M34.5 30 L 34.5 33" strokeWidth="1.6" />
+
+      {/* Coat — shoulders, sides, hem */}
+      <path d="M29 33 L 16 36 L 13 50 L 13 68 Q 13 72 17 73 L 47 73 Q 51 72 51 68 L 51 50 L 48 36 L 35 33" />
+
+      {/* Lapels / V neckline of coat */}
+      <path d="M29 33 L 32 42 L 35 33" />
+
+      {/* Center coat closure */}
+      <path d="M32 42 L 32 72" />
+
+      {/* Buttons */}
+      <circle cx="32" cy="48" r="1.1" fill={color} stroke="none" />
+      <circle cx="32" cy="55" r="1.1" fill={color} stroke="none" />
+      <circle cx="32" cy="62" r="1.1" fill={color} stroke="none" />
+
+      {/* Pocket flaps */}
+      <path d="M19 58 L 26 60" />
+      <path d="M38 60 L 45 58" />
+    </svg>
+  )
+}
+
+/* Two red Catan dice with golden pips — modeled after the reference render. */
+function CatanDice({ className }) {
+  return (
+    <svg viewBox="0 0 170 110" className={className} aria-hidden>
+      <defs>
+        {/* Face gradient: brighter top-left, deepening to bottom-right. */}
+        <linearGradient id="dice-face" x1="0.15" y1="0" x2="0.85" y2="1">
+          <stop offset="0%" stopColor="#f56a55" />
+          <stop offset="45%" stopColor="#d8392a" />
+          <stop offset="100%" stopColor="#7d1e14" />
+        </linearGradient>
+        {/* Top gloss — a soft white band along the upper edge. */}
+        <linearGradient id="dice-gloss" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="white" stopOpacity="0.55" />
+          <stop offset="40%" stopColor="white" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="white" stopOpacity="0" />
+        </linearGradient>
+        {/* Right-edge darken to fake a beveled corner. */}
+        <linearGradient id="dice-edge" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="black" stopOpacity="0" />
+          <stop offset="80%" stopColor="black" stopOpacity="0" />
+          <stop offset="100%" stopColor="black" stopOpacity="0.35" />
+        </linearGradient>
+        {/* Pip — yellow with a small inset highlight + dark rim. */}
+        <radialGradient id="pip" cx="32%" cy="30%" r="72%">
+          <stop offset="0%" stopColor="#fff5b3" />
+          <stop offset="55%" stopColor="#f1c40f" />
+          <stop offset="100%" stopColor="#8a6608" />
+        </radialGradient>
+        {/* Soft ground shadow under each die. */}
+        <radialGradient id="ground-shadow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="black" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="black" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+
+      {/* Ground shadows behind both dice */}
+      <ellipse cx="42" cy="92" rx="32" ry="6" fill="url(#ground-shadow)" />
+      <ellipse cx="120" cy="94" rx="32" ry="6" fill="url(#ground-shadow)" />
+
+      {/* Die 1 — shows 5 */}
+      <g transform="translate(15 18) rotate(-8 27 27)">
+        <rect
+          width="54"
+          height="54"
+          rx="11"
+          fill="url(#dice-face)"
+          stroke="#4a1108"
+          strokeWidth="1.3"
+        />
+        <rect width="54" height="54" rx="11" fill="url(#dice-gloss)" />
+        <rect width="54" height="54" rx="11" fill="url(#dice-edge)" />
+        {/* Pip rims + pips for the "5" face */}
+        {[
+          [13, 13],
+          [41, 13],
+          [27, 27],
+          [13, 41],
+          [41, 41],
+        ].map(([cx, cy], i) => (
+          <g key={i}>
+            <circle cx={cx} cy={cy + 0.6} r="4.5" fill="#3a0a05" opacity="0.55" />
+            <circle cx={cx} cy={cy} r="4.4" fill="url(#pip)" />
+          </g>
+        ))}
+      </g>
+
+      {/* Die 2 — shows 5 */}
+      <g transform="translate(93 22) rotate(7 27 27)">
+        <rect
+          width="54"
+          height="54"
+          rx="11"
+          fill="url(#dice-face)"
+          stroke="#4a1108"
+          strokeWidth="1.3"
+        />
+        <rect width="54" height="54" rx="11" fill="url(#dice-gloss)" />
+        <rect width="54" height="54" rx="11" fill="url(#dice-edge)" />
+        {[
+          [13, 13],
+          [41, 13],
+          [27, 27],
+          [13, 41],
+          [41, 41],
+        ].map(([cx, cy], i) => (
+          <g key={i}>
+            <circle cx={cx} cy={cy + 0.6} r="4.5" fill="#3a0a05" opacity="0.55" />
+            <circle cx={cx} cy={cy} r="4.4" fill="url(#pip)" />
+          </g>
+        ))}
+      </g>
     </svg>
   )
 }
