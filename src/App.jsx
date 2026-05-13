@@ -100,11 +100,11 @@ function App() {
       <div className="charter-vignette" aria-hidden />
       <div className="charter-grain" aria-hidden />
 
-      <div className="relative z-10 mx-auto flex min-h-svh max-w-6xl flex-col px-6 py-10 sm:px-10 sm:py-14">
+      <div className="relative z-10 mx-auto flex min-h-svh max-w-6xl flex-col px-4 py-8 sm:px-8 sm:py-12 lg:px-10 lg:py-14">
         <Header total={totals.total} onReset={handleResetAll} />
 
-        <main className="mt-12 flex-1">
-          <div className="grid gap-7 md:grid-cols-2 xl:grid-cols-3">
+        <main className="mt-8 flex-1 sm:mt-12">
+          <div className="grid gap-6 sm:gap-7 md:grid-cols-2 xl:grid-cols-3">
             {INITIAL_PLAYERS.map((player, index) => (
               <PlayerCard
                 key={player.id}
@@ -137,27 +137,27 @@ function Header({ total, onReset }) {
         transition={{ duration: 0.7, ease: 'easeOut' }}
         className="flex flex-col items-center text-center"
       >
-        <div className="flex items-center gap-3 text-catan-tan/85">
-          <CompassRose className="h-5 w-5" />
-          <span className="font-display text-xs uppercase tracking-[0.5em]">
+        <div className="flex items-center gap-2 text-catan-tan/85 sm:gap-3">
+          <CompassRose className="h-4 w-4 sm:h-5 sm:w-5" />
+          <span className="font-display text-[10px] uppercase tracking-[0.32em] sm:text-xs sm:tracking-[0.5em]">
             Settlers Chronicle
           </span>
-          <CompassRose className="h-5 w-5" />
+          <CompassRose className="h-4 w-4 sm:h-5 sm:w-5" />
         </div>
 
-        <h1 className="mt-4 font-display text-5xl font-bold tracking-tight sm:text-7xl">
+        <h1 className="mt-3 font-display text-[2.25rem] font-bold leading-[1.05] tracking-tight sm:mt-4 sm:text-6xl md:text-7xl">
           <span className="gold-shimmer">Catan Victory Tracker</span>
         </h1>
 
-        <p className="mt-4 max-w-xl text-sm italic text-catan-tan/85 sm:text-base">
+        <p className="mt-3 max-w-xl px-2 text-xs italic text-catan-tan/85 sm:mt-4 sm:text-base">
           Every Thursday, there's that moment...
         </p>
 
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+        <div className="mt-6 flex w-full flex-wrap items-center justify-center gap-3 sm:mt-8 sm:gap-4">
           <StatPill label="Games Played" value={total} />
           <button
             onClick={onReset}
-            className="group inline-flex items-center gap-2 rounded-full border border-catan-tan/25 bg-black/30 px-5 py-2.5 text-xs font-semibold uppercase tracking-widest text-catan-tan/90 backdrop-blur-md transition hover:border-catan-red/60 hover:bg-catan-red/15 hover:text-catan-tan"
+            className="group inline-flex items-center gap-2 rounded-full border border-catan-tan/25 bg-black/30 px-4 py-2 text-[11px] font-semibold uppercase tracking-widest text-catan-tan/90 backdrop-blur-md transition hover:border-catan-red/60 hover:bg-catan-red/15 hover:text-catan-tan sm:px-5 sm:py-2.5 sm:text-xs"
           >
             <ResetIcon className="h-3.5 w-3.5 transition group-hover:rotate-180" />
             Reset Chronicle
@@ -170,8 +170,8 @@ function Header({ total, onReset }) {
 
 function StatPill({ label, value }) {
   return (
-    <div className="inline-flex items-center gap-3 rounded-full border border-catan-tan/25 bg-black/30 px-5 py-2.5 backdrop-blur-md">
-      <span className="text-xs font-semibold uppercase tracking-widest text-catan-tan/70">
+    <div className="inline-flex items-center gap-2.5 rounded-full border border-catan-tan/25 bg-black/30 px-4 py-2 backdrop-blur-md sm:gap-3 sm:px-5 sm:py-2.5">
+      <span className="text-[11px] font-semibold uppercase tracking-widest text-catan-tan/70 sm:text-xs">
         {label}
       </span>
       <motion.span
@@ -179,7 +179,7 @@ function StatPill({ label, value }) {
         initial={{ y: -8, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-        className="font-display text-lg font-bold text-catan-tan"
+        className="font-display text-base font-bold text-catan-tan sm:text-lg"
       >
         {value}
       </motion.span>
@@ -212,7 +212,7 @@ function PlayerCard({
         ease: [0.21, 0.47, 0.32, 0.98],
       }}
       whileHover={{ y: -6 }}
-      className="grain group relative overflow-hidden rounded-3xl border p-7 backdrop-blur-xl"
+      className="grain group relative overflow-hidden rounded-3xl border p-5 backdrop-blur-xl sm:p-7"
       style={{
         background: cardBackground,
         borderColor: `${player.accent}40`,
@@ -237,7 +237,7 @@ function PlayerCard({
             animate={{ opacity: 1, y: 0, rotate: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-            className="absolute right-5 top-5 flex items-center gap-1.5 rounded-full border border-white/10 bg-black/55 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-catan-yellow shadow-lg backdrop-blur"
+            className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full border border-white/10 bg-black/55 px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest text-catan-yellow shadow-lg backdrop-blur sm:right-5 sm:top-5 sm:px-3 sm:py-1.5 sm:text-[10px]"
           >
             <CrownIcon className="h-3 w-3" />
             Reigning
@@ -245,9 +245,9 @@ function PlayerCard({
         )}
       </AnimatePresence>
 
-      <header className="flex flex-col items-center gap-4 text-center">
+      <header className="flex flex-col items-center gap-3 text-center sm:gap-4">
         <div
-          className="relative h-20 w-20 overflow-hidden rounded-2xl"
+          className="relative h-16 w-16 overflow-hidden rounded-2xl sm:h-20 sm:w-20"
           style={{
             border: `2px solid ${player.accent}`,
             boxShadow: `inset 0 1px 0 rgba(255,255,255,0.5), 0 14px 32px -10px ${player.glow}, 0 0 0 4px rgba(0,0,0,0.18)`,
@@ -270,24 +270,24 @@ function PlayerCard({
           />
         </div>
         <h2
-          className="w-full truncate font-display text-3xl font-bold leading-tight text-catan-tan sm:text-[34px]"
+          className="w-full truncate font-display text-2xl font-bold leading-tight text-catan-tan sm:text-3xl md:text-[34px]"
           title={player.name}
         >
           {player.name}
         </h2>
       </header>
 
-      <div className="relative my-6 flex items-center justify-center">
+      <div className="relative my-5 flex items-center justify-center sm:my-6">
         <div
           aria-hidden
           className="absolute inset-0 rounded-2xl opacity-25 blur-2xl"
           style={{ background: player.accent }}
         />
         <div className="relative flex flex-col items-center">
-          <span className="font-display text-[11px] uppercase tracking-[0.4em] text-catan-tan/60">
+          <span className="font-display text-[10px] uppercase tracking-[0.35em] text-catan-tan/60 sm:text-[11px] sm:tracking-[0.4em]">
             Victories
           </span>
-          <div className="relative h-28 w-32">
+          <div className="relative h-24 w-28 sm:h-28 sm:w-32">
             <AnimatePresence mode="popLayout">
               <motion.span
                 key={wins}
@@ -295,7 +295,7 @@ function PlayerCard({
                 animate={{ y: 0, opacity: 1, scale: 1, rotateX: 0 }}
                 exit={{ y: -40, opacity: 0, scale: 0.6, rotateX: 90 }}
                 transition={{ type: 'spring', stiffness: 350, damping: 26 }}
-                className="absolute inset-0 flex items-center justify-center font-display text-7xl font-black tabular-nums text-white"
+                className="absolute inset-0 flex items-center justify-center font-display text-6xl font-black tabular-nums text-white sm:text-7xl"
                 style={{
                   textShadow: `0 4px 18px ${player.glow}, 0 0 1px rgba(0,0,0,0.4)`,
                 }}
@@ -317,7 +317,7 @@ function PlayerCard({
         </div>
       </div>
 
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-3 sm:gap-4">
         <CounterButton
           variant="decrement"
           accent={player.accent}
@@ -328,7 +328,7 @@ function PlayerCard({
 
         <RobberIcon
           color={player.accent}
-          className="h-12 w-12"
+          className="h-11 w-11 sm:h-12 sm:w-12"
           aria-label={`${player.name}'s robber token`}
         />
 
@@ -354,7 +354,7 @@ function CounterButton({ variant, accent, accentDeep, onClick, disabled, label }
       whileTap={{ scale: 0.88 }}
       whileHover={disabled ? {} : { scale: 1.08 }}
       transition={{ type: 'spring', stiffness: 400, damping: 18 }}
-      className="group relative flex h-14 w-14 items-center justify-center rounded-2xl font-display text-2xl font-bold text-white transition disabled:cursor-not-allowed disabled:opacity-30"
+      className="group relative flex h-16 w-16 items-center justify-center rounded-2xl font-display text-3xl font-bold text-white transition disabled:cursor-not-allowed disabled:opacity-30 sm:h-14 sm:w-14 sm:text-2xl"
       style={{
         background: isInc
           ? `linear-gradient(135deg, ${accent}, ${accentDeep})`
@@ -382,27 +382,27 @@ function LeaderboardBar({ players, wins }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.6 }}
-      className="mt-12 rounded-3xl border border-white/10 bg-black/35 p-7 backdrop-blur-xl"
+      className="mt-10 rounded-3xl border border-white/10 bg-black/35 p-5 backdrop-blur-xl sm:mt-12 sm:p-7"
     >
-      <div className="mb-5 flex items-baseline justify-between">
-        <h2 className="font-display text-xs uppercase tracking-[0.4em] text-catan-tan/75">
+      <div className="mb-4 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 sm:mb-5">
+        <h2 className="font-display text-[11px] uppercase tracking-[0.32em] text-catan-tan/75 sm:text-xs sm:tracking-[0.4em]">
           Path to Victory
         </h2>
-        <span className="text-[11px] uppercase tracking-widest text-catan-tan/55">
+        <span className="text-[10px] uppercase tracking-widest text-catan-tan/55 sm:text-[11px]">
           Share of glory
         </span>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {players.map((player) => {
           const count = wins[player.id]
           const pct = total > 0 ? (count / total) * 100 : 0
           return (
-            <div key={player.id} className="flex items-center gap-4">
-              <span className="w-32 shrink-0 truncate text-sm font-semibold text-catan-tan/90">
+            <div key={player.id} className="flex items-center gap-3 sm:gap-4">
+              <span className="w-24 shrink-0 truncate text-xs font-semibold text-catan-tan/90 sm:w-32 sm:text-sm">
                 {player.name}
               </span>
-              <div className="relative h-3 flex-1 overflow-hidden rounded-full bg-black/55">
+              <div className="relative h-2.5 flex-1 overflow-hidden rounded-full bg-black/55 sm:h-3">
                 <motion.div
                   className="h-full rounded-full"
                   style={{
@@ -414,7 +414,7 @@ function LeaderboardBar({ players, wins }) {
                   transition={{ type: 'spring', stiffness: 120, damping: 22 }}
                 />
               </div>
-              <span className="w-10 text-right font-display text-sm font-bold tabular-nums text-catan-tan">
+              <span className="w-8 text-right font-display text-xs font-bold tabular-nums text-catan-tan sm:w-10 sm:text-sm">
                 {count}
               </span>
             </div>
@@ -427,15 +427,15 @@ function LeaderboardBar({ players, wins }) {
 
 function Footer() {
   return (
-    <footer className="mt-16 flex flex-col items-center gap-5 text-center">
-      <div className="flex items-center gap-4">
-        <span className="h-px w-16 bg-catan-tan/25" />
+    <footer className="mt-12 flex flex-col items-center gap-4 px-2 text-center sm:mt-16 sm:gap-5">
+      <div className="flex items-center gap-3 sm:gap-4">
+        <span className="h-px w-10 bg-catan-tan/25 sm:w-16" />
         <CompassRose className="h-4 w-4 text-catan-tan/50" />
-        <span className="h-px w-16 bg-catan-tan/25" />
+        <span className="h-px w-10 bg-catan-tan/25 sm:w-16" />
       </div>
-      <CatanDice className="h-16 w-auto sm:h-20" />
+      <CatanDice className="h-12 w-auto sm:h-16 md:h-20" />
       <p
-        className="font-display text-2xl font-extrabold uppercase tracking-[0.28em] sm:text-3xl"
+        className="break-words font-display text-base font-extrabold uppercase tracking-[0.18em] sm:text-2xl sm:tracking-[0.24em] md:text-3xl md:tracking-[0.28em]"
         style={{
           color: '#f5e6c8',
           textShadow:
