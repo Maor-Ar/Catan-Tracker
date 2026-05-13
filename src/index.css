@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+@theme {
+  --color-catan-orange: #f39c12;
+  --color-catan-red: #e74c3c;
+  --color-catan-blue: #2980b9;
+  --color-catan-green: #2ecc71;
+  --color-catan-yellow: #f1c40f;
+  --color-catan-tan: #f3e5ab;
+  --color-catan-sand: #e8c483;
+  --color-catan-parchment: #f5e6c8;
+  --color-catan-ink: #2b1810;
+  --color-catan-ocean: #1e3a5f;
+  --color-catan-deep: #0f2030;
+  --color-catan-dusk: #4a1f3a;
+  --color-catan-ember: #ff6b35;
+
+  --font-display: "Cinzel", "Trajan Pro", "Times New Roman", serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+@font-face {
+  font-family: "Cinzel";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/s/cinzel/v23/8vIU7ww63mVu7gtR-kwKxNvkNOjw-tbnTYrvDE5ZdqU.woff2")
+    format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/s/inter/v19/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2")
+    format("woff2");
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #1a0a1f;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+/* Vignette overlay drawn on top of the SVG map for an old-charter feel. */
+.charter-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(
+      ellipse at 50% 55%,
+      transparent 0%,
+      transparent 35%,
+      rgba(20, 6, 20, 0.45) 75%,
+      rgba(10, 4, 14, 0.85) 100%
+    );
+}
+
+/* Subtle film grain to make the map look like a printed charter. */
+.charter-grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.18;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.85 0 0 0 0 0.6 0 0 0 0.6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* Slight per-card grain so frosted glass doesn't feel sterile. */
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.12;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 0.9 0 0 0 0 0.7 0 0 0 0.5 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  border-radius: inherit;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.gold-shimmer {
+  background: linear-gradient(
+    110deg,
+    #8b6914 0%,
+    #b8860b 15%,
+    #ffd700 32%,
+    #fff4c2 45%,
+    #ffd700 58%,
+    #b8860b 75%,
+    #6b4f10 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 4s ease-in-out infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.35))
+    drop-shadow(0 0 18px rgba(255, 196, 80, 0.25));
+}
+
+@keyframes sun-pulse {
+  0%,
+  100% {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+
+.sun-pulse {
+  transform-origin: center;
+  animation: sun-pulse 9s ease-in-out infinite;
+}
