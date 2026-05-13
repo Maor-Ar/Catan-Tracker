@@ -1,38 +1,75 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import wheatImg from './assets/wheat.jpeg'
+import oreImg from './assets/ore.jpeg'
+import brickImg from './assets/brik.jpeg'
+
+const STORAGE_KEY = 'catan-tracker:wins:v1'
+
+function loadStoredWins(players) {
+  const empty = Object.fromEntries(players.map((p) => [p.id, 0]))
+  if (typeof window === 'undefined') return empty
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY)
+    if (!raw) return empty
+    const parsed = JSON.parse(raw)
+    return Object.fromEntries(
+      players.map((p) => {
+        const v = parsed?.[p.id]
+        return [p.id, Number.isFinite(v) ? Math.max(0, Math.floor(v)) : 0]
+      })
+    )
+  } catch {
+    return empty
+  }
+}
+
+function saveWins(wins) {
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(wins))
+  } catch {
+    /* ignore quota / privacy errors */
+  }
+}
 
 const INITIAL_PLAYERS = [
   {
     id: 'neriya',
     name: 'Neriya Zudi',
+    resource: 'Wheat',
+    image: wheatImg,
     accent: '#f39c12',
     accentDeep: '#b9750a',
     glow: 'rgba(243, 156, 18, 0.55)',
-    icon: WheatIcon,
   },
   {
     id: 'eliko',
     name: 'Eliko Hubara',
+    resource: 'Ore',
+    image: oreImg,
     accent: '#2980b9',
     accentDeep: '#1c5980',
     glow: 'rgba(41, 128, 185, 0.55)',
-    icon: OreIcon,
   },
   {
     id: 'tal',
     name: 'Tal Halevi',
+    resource: 'Brick',
+    image: brickImg,
     accent: '#e74c3c',
     accentDeep: '#a52a1d',
     glow: 'rgba(231, 76, 60, 0.55)',
-    icon: BrickIcon,
   },
 ]
 
 function App() {
-  const [wins, setWins] = useState(() =>
-    Object.fromEntries(INITIAL_PLAYERS.map((p) => [p.id, 0]))
-  )
+  const [wins, setWins] = useState(() => loadStoredWins(INITIAL_PLAYERS))
   const [pulseId, setPulseId] = useState(null)
+
+  useEffect(() => {
+    saveWins(wins)
+  }, [wins])
 
   const totals = useMemo(() => {
     const total = Object.values(wins).reduce((a, b) => a + b, 0)
@@ -159,8 +196,6 @@ function PlayerCard({
   onDecrement,
   index,
 }) {
-  const Icon = player.icon
-
   const cardBackground = `
     linear-gradient(135deg, ${player.accent}26 0%, ${player.accent}0d 45%, rgba(8, 12, 24, 0.55) 100%),
     radial-gradient(ellipse at top, ${player.accent}1f 0%, transparent 70%),
@@ -212,14 +247,27 @@ function PlayerCard({
 
       <header className="flex flex-col items-center gap-4 text-center">
         <div
-          className="flex h-16 w-16 items-center justify-center rounded-2xl"
+          className="relative h-20 w-20 overflow-hidden rounded-2xl"
           style={{
-            background: 'linear-gradient(135deg, #f8eccd 0%, #e8c483 100%)',
             border: `2px solid ${player.accent}`,
-            boxShadow: `inset 0 1px 0 rgba(255,255,255,0.7), 0 12px 30px -10px ${player.glow}`,
+            boxShadow: `inset 0 1px 0 rgba(255,255,255,0.5), 0 14px 32px -10px ${player.glow}, 0 0 0 4px rgba(0,0,0,0.18)`,
           }}
         >
-          <Icon className="h-10 w-10" />
+          <img
+            src={player.image}
+            alt={`${player.resource} — ${player.name}`}
+            className="h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 rounded-2xl"
+            style={{
+              background:
+                'linear-gradient(180deg, rgba(255,255,255,0.18) 0%, transparent 35%, transparent 65%, rgba(0,0,0,0.18) 100%)',
+            }}
+          />
         </div>
         <h2
           className="w-full truncate font-display text-3xl font-bold leading-tight text-catan-tan sm:text-[34px]"
@@ -709,156 +757,138 @@ function ResetIcon({ className }) {
   )
 }
 
-/* Isometric stack of three terracotta bricks, in the spirit of the reference. */
-function BrickIcon({ className }) {
-  return (
-    <svg viewBox="0 0 32 32" className={className}>
-      <g stroke="rgba(0,0,0,0.45)" strokeWidth="0.9" strokeLinejoin="round">
-        {/* Bottom brick */}
-        <polygon points="4,20 14,17 26,20 16,23" fill="#e0825a" />
-        <polygon points="4,20 16,23 16,28 4,25" fill="#a85433" />
-        <polygon points="16,23 26,20 26,25 16,28" fill="#c66740" />
-        {/* Middle brick (offset right) */}
-        <polygon points="14,14 22,12 30,14.5 22,16.5" fill="#e8956b" />
-        <polygon points="14,14 22,16.5 22,20.5 14,18" fill="#ad5634" />
-        <polygon points="22,16.5 30,14.5 30,18.5 22,20.5" fill="#c66740" />
-        {/* Top brick (offset left) */}
-        <polygon points="6,8 14,6 22,8 14,10" fill="#e8956b" />
-        <polygon points="6,8 14,10 14,14 6,12" fill="#ad5634" />
-        <polygon points="14,10 22,8 22,12 14,14" fill="#c66740" />
-      </g>
-      {/* Tiny mortar nicks for that illustrated feel */}
-      <g stroke="rgba(0,0,0,0.35)" strokeWidth="0.5" strokeLinecap="round">
-        <line x1="10" y1="9" x2="10" y2="13" />
-        <line x1="18" y1="11" x2="18" y2="14.5" />
-        <line x1="10" y1="21.5" x2="10" y2="26.5" />
-      </g>
-    </svg>
-  )
-}
 
-/* Cluster of ore rocks with facets and highlights. */
-function OreIcon({ className }) {
-  return (
-    <svg viewBox="0 0 32 32" className={className}>
-      <g stroke="rgba(0,0,0,0.4)" strokeWidth="0.9" strokeLinejoin="round">
-        {/* Back rock */}
-        <polygon points="8,15 14,5 22,7 26,14 22,20 12,21" fill="#aab2bd" />
-        {/* Front-left rock */}
-        <polygon points="4,20 10,14 16,18 14,26 6,26" fill="#cdd3da" />
-        {/* Front-right rock */}
-        <polygon points="16,18 22,16 28,22 26,28 16,27" fill="#b9c0c9" />
-        {/* Facet creases for chiseled look */}
-        <polyline points="14,5 16,12 22,7" fill="none" />
-        <polyline points="10,14 12,18 16,18" fill="none" />
-        <polyline points="22,16 24,22 28,22" fill="none" />
-      </g>
-      {/* Highlight specks */}
-      <g fill="white" opacity="0.55">
-        <polygon points="13,8 16,9 14,11" />
-        <polygon points="7,21 9,21.5 8,23" />
-        <polygon points="22,19 24,20 22.5,22" />
-      </g>
-    </svg>
-  )
-}
-
-/* Sheaf of wheat — three grain heads on a stem with a bound twine. */
-function WheatIcon({ className }) {
-  return (
-    <svg viewBox="0 0 32 32" className={className}>
-      <g
-        stroke="rgba(80,50,10,0.65)"
-        strokeWidth="0.9"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="#f1c40f"
-      >
-        {/* Center stalk */}
-        <path
-          d="M16 30 L 16 14"
-          stroke="rgba(80,50,10,0.85)"
-          strokeWidth="1.4"
-          fill="none"
-        />
-        {/* Center grain head */}
-        <ellipse cx="16" cy="8" rx="2" ry="3.5" />
-        <ellipse cx="16" cy="3.5" rx="1.6" ry="2.6" />
-        <path d="M16 11.5 L 16 14" stroke="rgba(80,50,10,0.85)" />
-        {/* Left grain head */}
-        <path d="M10 22 L 16 16" stroke="rgba(80,50,10,0.85)" strokeWidth="1.2" fill="none" />
-        <ellipse cx="9.5" cy="14" rx="2" ry="3.4" transform="rotate(-30 9.5 14)" />
-        <ellipse cx="7" cy="10" rx="1.6" ry="2.6" transform="rotate(-30 7 10)" />
-        {/* Right grain head */}
-        <path d="M22 22 L 16 16" stroke="rgba(80,50,10,0.85)" strokeWidth="1.2" fill="none" />
-        <ellipse cx="22.5" cy="14" rx="2" ry="3.4" transform="rotate(30 22.5 14)" />
-        <ellipse cx="25" cy="10" rx="1.6" ry="2.6" transform="rotate(30 25 10)" />
-        {/* Twine binding */}
-        <rect x="13" y="22" width="6" height="2.6" rx="1" fill="#a05a16" stroke="rgba(40,20,5,0.7)" />
-      </g>
-      {/* Grain seam highlights */}
-      <g stroke="rgba(255,250,200,0.55)" strokeWidth="0.7" fill="none">
-        <line x1="16" y1="5" x2="16" y2="11" />
-        <line x1="8" y1="11" x2="11" y2="16" />
-        <line x1="24" y1="11" x2="21" y2="16" />
-      </g>
-    </svg>
-  )
-}
-
-/* The Robber — detective-style outline (fedora hat, eye mask, trench coat).
-   Pure line art in the player's accent color. */
+/* The Robber — minimalist silhouette modeled after the 3D Catan figurine in
+   src/assets/rober.jpeg. Stocky pawn with a wide fedora, eye mask, hands
+   clasped at chest, and a heavy cloak resting on a circular base. The whole
+   silhouette is tinted with the player's accent color. */
 function RobberIcon({ className, color, ...rest }) {
+  const safe = color.replace('#', '')
+  const bodyId = `robber-body-${safe}`
+  const headId = `robber-head-${safe}`
   return (
     <svg
       viewBox="0 0 64 80"
       className={className}
       role="img"
-      fill="none"
-      stroke={color}
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
       {...rest}
     >
+      <defs>
+        <linearGradient id={bodyId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="1" />
+          <stop offset="65%" stopColor={color} stopOpacity="0.92" />
+          <stop offset="100%" stopColor={color} stopOpacity="0.6" />
+        </linearGradient>
+        <radialGradient id={headId} cx="40%" cy="35%" r="65%">
+          <stop offset="0%" stopColor={color} stopOpacity="1" />
+          <stop offset="100%" stopColor={color} stopOpacity="0.75" />
+        </radialGradient>
+      </defs>
+
+      {/* Ground shadow */}
+      <ellipse cx="32" cy="73" rx="20" ry="2.6" fill={color} opacity="0.25" />
+
+      {/* Base disc */}
+      <ellipse
+        cx="32"
+        cy="70"
+        rx="18"
+        ry="3.2"
+        fill={color}
+        opacity="0.85"
+        stroke="rgba(0,0,0,0.35)"
+        strokeWidth="0.7"
+      />
+
+      {/* Cloak / body — chunky pear shape */}
+      <path
+        d="M20 28
+           C 14 31, 11 38, 11 47
+           C 11 55, 12.5 62, 14 67
+           C 14.5 69, 16 70, 18 70
+           L 46 70
+           C 48 70, 49.5 69, 50 67
+           C 51.5 62, 53 55, 53 47
+           C 53 38, 50 31, 44 28 Z"
+        fill={`url(#${bodyId})`}
+        stroke="rgba(0,0,0,0.35)"
+        strokeWidth="0.8"
+        strokeLinejoin="round"
+      />
+
+      {/* Hands clasped at chest */}
+      <ellipse
+        cx="24"
+        cy="42"
+        rx="4.2"
+        ry="4.6"
+        fill={`url(#${bodyId})`}
+        stroke="rgba(0,0,0,0.4)"
+        strokeWidth="0.8"
+      />
+      <ellipse
+        cx="40"
+        cy="42"
+        rx="4.2"
+        ry="4.6"
+        fill={`url(#${bodyId})`}
+        stroke="rgba(0,0,0,0.4)"
+        strokeWidth="0.8"
+      />
+
+      {/* Head */}
+      <ellipse
+        cx="32"
+        cy="22"
+        rx="9"
+        ry="8.5"
+        fill={`url(#${headId})`}
+        stroke="rgba(0,0,0,0.3)"
+        strokeWidth="0.7"
+      />
+
       {/* Hat brim */}
-      <path d="M11 17 Q 32 13 53 17 Q 32 20 11 17 Z" />
+      <ellipse
+        cx="32"
+        cy="14"
+        rx="15"
+        ry="2.8"
+        fill={color}
+        stroke="rgba(0,0,0,0.4)"
+        strokeWidth="0.8"
+      />
 
       {/* Hat crown */}
-      <path d="M21 17 L 21 9 Q 21 5 26 5 L 38 5 Q 43 5 43 9 L 43 17" />
+      <path
+        d="M25 14
+           L 25 7
+           Q 25 4 28.5 4
+           L 35.5 4
+           Q 39 4 39 7
+           L 39 14 Z"
+        fill={color}
+        stroke="rgba(0,0,0,0.4)"
+        strokeWidth="0.8"
+        strokeLinejoin="round"
+      />
 
-      {/* Hatband */}
-      <path d="M22 14 L 42 14" strokeWidth="1.6" />
+      {/* Hatband — darker pinstripe */}
+      <rect x="25" y="11.5" width="14" height="1.6" fill="rgba(0,0,0,0.55)" />
 
-      {/* Face / jaw beneath the hat */}
-      <path d="M24 19 L 24 25 Q 24 29 28 30 L 36 30 Q 40 29 40 25 L 40 19" />
-
-      {/* Eye mask — two lenses connected by a bridge */}
-      <circle cx="28" cy="22.5" r="2.4" fill={color} stroke="none" />
-      <circle cx="36" cy="22.5" r="2.4" fill={color} stroke="none" />
-      <path d="M30.2 22.5 L 33.8 22.5" strokeWidth="1.4" />
-
-      {/* Neck */}
-      <path d="M29.5 30 L 29.5 33" strokeWidth="1.6" />
-      <path d="M34.5 30 L 34.5 33" strokeWidth="1.6" />
-
-      {/* Coat — shoulders, sides, hem */}
-      <path d="M29 33 L 16 36 L 13 50 L 13 68 Q 13 72 17 73 L 47 73 Q 51 72 51 68 L 51 50 L 48 36 L 35 33" />
-
-      {/* Lapels / V neckline of coat */}
-      <path d="M29 33 L 32 42 L 35 33" />
-
-      {/* Center coat closure */}
-      <path d="M32 42 L 32 72" />
-
-      {/* Buttons */}
-      <circle cx="32" cy="48" r="1.1" fill={color} stroke="none" />
-      <circle cx="32" cy="55" r="1.1" fill={color} stroke="none" />
-      <circle cx="32" cy="62" r="1.1" fill={color} stroke="none" />
-
-      {/* Pocket flaps */}
-      <path d="M19 58 L 26 60" />
-      <path d="M38 60 L 45 58" />
+      {/* Eye mask — long horizontal bar with two eye notches */}
+      <path
+        d="M24.5 22
+           Q 24.5 19.5 27 19.5
+           L 37 19.5
+           Q 39.5 19.5 39.5 22
+           Q 39.5 23.8 37.5 23.8
+           L 26.5 23.8
+           Q 24.5 23.8 24.5 22 Z"
+        fill="rgba(15,8,4,0.78)"
+      />
+      {/* Mask reflections */}
+      <ellipse cx="28" cy="21.6" rx="1.3" ry="0.7" fill="rgba(255,255,255,0.35)" />
+      <ellipse cx="36" cy="21.6" rx="1.3" ry="0.7" fill="rgba(255,255,255,0.35)" />
     </svg>
   )
 }
