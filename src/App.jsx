@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import wheatImg from './assets/wheat.jpeg'
 import oreImg from './assets/ore.jpeg'
 import brickImg from './assets/brik.jpeg'
+import sheepImg from './assets/sheep.jpeg'
 
 const STORAGE_KEY = 'catan-tracker:wins:v1'
 
@@ -61,6 +62,15 @@ const INITIAL_PLAYERS = [
     accentDeep: '#a52a1d',
     glow: 'rgba(231, 76, 60, 0.55)',
   },
+  {
+  id: 'maor',
+  name: 'Maor Arnon',
+  resource: 'Sheep',
+  image: sheepImg,
+  accent: '#27ae60',
+  accentDeep: '#1e8449',
+  glow: 'rgba(39, 174, 96, 0.55)',
+}
 ]
 
 function App() {
